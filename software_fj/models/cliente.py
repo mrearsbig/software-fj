@@ -10,11 +10,12 @@ personalizada y el cliente no se crea.
 # Importa el módulo re (expresiones regulares) para validar el formato del correo.
 import re
 
+# Importa las excepciones personalizadas que lanza esta clase.
+from software_fj.exceptions.excepciones import DatoInvalidoError, ParametroFaltanteError
+
 # Importa la clase abstracta de la que hereda Cliente.
 from software_fj.models.entidad import Entidad
 
-# Importa las excepciones personalizadas que lanza esta clase.
-from software_fj.exceptions.excepciones import DatoInvalidoError, ParametroFaltanteError
 
 # Hereda de Entidad: Cliente recibe el id, la fecha de creación y la obligación
 # de implementar describir() y validar().
