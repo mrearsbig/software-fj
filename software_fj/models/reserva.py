@@ -10,9 +10,11 @@ y controla su ciclo de vida mediante estados:
 Cada cambio de estado se valida; si la operación no está permitida, se lanza
 una excepción personalizada y la reserva conserva su estado anterior.
 """
-
 # Importa Real para aceptar cualquier tipo numérico (int o float) en la duración.
 from numbers import Real
+
+# Importa Optional para indicar que el descuento puede omitirse (None).
+from typing import Optional
 
 # Importa las excepciones personalizadas que usa esta clase.
 from software_fj.exceptions.excepciones import (
@@ -157,12 +159,14 @@ class Reserva(Entidad):
 
     #OPERACIONES DE LA RESERVA 
 
-    def confirmar(self, impuesto=0.0, descuento=0.0):
+    def confirmar(self, impuesto: Real = 0.0, descuento: Optional[Real] = None):
         """Confirma la reserva y calcula su costo con el servicio asociado.
 
         Solo se puede confirmar una reserva PENDIENTE. Si el servicio no permite
         calcular el costo (no disponible, duración excesiva, descuento inválido...),
-        se lanza ReservaInvalidaError encadenada al error original.
+        se lanza ReservaInvalidaError encadenada al error original. 
+        Si no se envía descuento (None), cada servicio decide su descuento por
+        defecto; por ejemplo, el alquiler de equipos aplica su descuento automático.
         """
         # Regla de estado: solo una reserva pendiente puede confirmarse.
         if self._estado != self.PENDIENTE:
