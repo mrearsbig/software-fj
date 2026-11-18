@@ -21,6 +21,7 @@ from software_fj.exceptions.excepciones import (
 from software_fj.models.cliente import Cliente
 from software_fj.models.reserva import Reserva
 from software_fj.services.asesoria import Asesoria
+from software_fj.services.equipo import AlquilerEquipo
 from software_fj.services.sala import ReservaSala
 
 # Datos de prueba centralizados: si se cambian aquí, las pruebas se adaptan solas.
@@ -130,10 +131,18 @@ class PruebasReserva(unittest.TestCase):
             reserva.historial, [Reserva.PENDIENTE, Reserva.CONFIRMADA, Reserva.PROCESADA]
         )
 
-     # Polimorfismo: la misma Reserva funciona con una asesoría.
+    # Polimorfismo: la misma Reserva funciona con una asesoría.
     def test_reserva_con_asesoria(self):
         reserva = Reserva(crear_cliente(), crear_asesoria(nivel="EXPERTO"), 2)
         self.assertAlmostEqual(reserva.confirmar(), TARIFA_ASESORIA * 2 * 2.0)
+
+    # Si no se envía descuento, el equipo aplica su descuento automático por largo plazo.
+    def test_confirmar_respeta_descuento_automatico_de_equipo(self):
+        equipo = AlquilerEquipo("Proyector", 50000, 2)
+        dias = AlquilerEquipo.DIAS_PARA_DESCUENTO
+        reserva = Reserva(crear_cliente(), equipo, dias)
+        esperado = 50000 * dias * 2 * (1 - AlquilerEquipo.DESCUENTO_LARGO_PLAZO)
+        self.assertAlmostEqual(reserva.confirmar(), esperado)
 
     # Se puede cancelar una reserva pendiente.
     def test_cancelar_pendiente(self):

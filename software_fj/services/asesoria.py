@@ -10,6 +10,9 @@ calcular_costo(), validar() y describir() (polimorfismo).
 # Importa Real para aceptar cualquier tipo numérico (int o float).
 from numbers import Real
 
+# Importa Optional para indicar que el descuento puede omitirse (None).
+from typing import Optional
+
 # Importa las excepciones personalizadas que usa este servicio.
 from software_fj.exceptions.excepciones import (
     DatoInvalidoError,
@@ -119,7 +122,7 @@ class Asesoria(Servicio):
     # Sobrescribe calcular_costo(): cobra por hora según el nivel del asesor.
     # Los parámetros opcionales impuesto y descuento son la "sobrecarga" del método.
     def calcular_costo(
-        self, duracion: Real, impuesto: Real = 0.0, descuento: Real = 0.0
+        self, duracion: Real, impuesto: Real = 0.0, descuento: Optional[Real] = None
     ) -> Real:
         """Calcula el costo de la asesoría: tarifa x horas x factor del nivel."""
         # No se puede cotizar una asesoría que no está disponible.
@@ -132,6 +135,9 @@ class Asesoria(Servicio):
             raise ReservaInvalidaError(
                 f"Una asesoría no puede durar más de {self.MAX_HORAS} horas."
             )
+        # Si no se envió descuento (None), la asesoría no aplica ninguno.
+        if descuento is None:
+            descuento = 0.0
         # Costo base: tarifa por hora, por horas, por el factor del nivel.
         costo = self.tarifa_base * duracion * self.FACTORES_NIVEL[self.nivel]
         # Aplica descuento e impuesto con la lógica común de Servicio.
